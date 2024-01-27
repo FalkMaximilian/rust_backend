@@ -8,7 +8,7 @@ async fn main() {
         .route("/hello", get(handler_hello))
         .route("/hello2/:name", get(handler_hello2));
 
-    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+    let listener = TcpListener::bind("0.0.0.0:8080").await.unwrap();
     println!("->> LISTENING on {:?}\n", listener.local_addr());
     axum::serve(listener, routes_hello.into_make_service()).await.unwrap();
 }
