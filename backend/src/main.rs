@@ -1,8 +1,16 @@
+pub use  self::error::{Error, Result};
+
+
 use std::env;
 
-use axum::{extract::{Path, Query}, response::{Html, IntoResponse}, routing::get, Router};
+use axum::{extract::{Path, Query}, middleware, response::{Html, IntoResponse, Response}, routing::{get, get_service}, Router};
 use serde::Deserialize;
 use tokio::net::TcpListener;
+use tower_cookies::CookieManagerLayer;
+use tower_http::services::ServeDir;
+
+mod error;
+mod web;
 
 #[tokio::main]
 async fn main() {
@@ -10,20 +18,33 @@ async fn main() {
     let port = env::var("PORT").expect("Missing port number");
     let port = port.parse::<u16>().expect("Invalid port given");
 
-    let routes_hello = Router::new()
-        .route("/", get(handler_root))
-        .route("/hello", get(handler_hello))
-        .route("/hello2/:name", get(handler_hello2));
+    let routes_all = Router::new()
+        .merge(routes_hello())
+        .merge(web::routes_login::routes())
+        .layer(middleware::map_response(main_response_mapper))
+        .layer(CookieManagerLayer::new())
+        .fallback_service(routes_static());
 
     let listener = TcpListener::bind(format!("0.0.0.0:{port}")).await.unwrap();
     println!("->> LISTENING on {:?}\n", listener.local_addr());
-    axum::serve(listener, routes_hello.into_make_service()).await.unwrap();
+    axum::serve(listener, routes_all.into_make_service()).await.unwrap();
 }
 
-async fn handler_root() -> impl IntoResponse {
-    println!("->> {:<12} - handler_root", "HANDLER");
+async fn main_response_mapper(res: Response) -> Response {
+    println!("->> {:<12} - main_response_mapper", "RES_MAPPER");
+    
+    println!();
+    res
+}
 
-    Html("HiHi Hallo :)")
+fn routes_hello() -> Router {
+    Router::new()
+        .route("/hello", get(handler_hello))
+        .route("/hello2/:name", get(handler_hello2))
+}
+
+fn routes_static() -> Router {
+    Router::new().nest_service("/", get_service(ServeDir::new("./")))
 }
 
 #[derive(Debug, Deserialize)]
