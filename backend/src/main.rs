@@ -1,15 +1,21 @@
+use std::env;
+
 use axum::{extract::{Path, Query}, response::{Html, IntoResponse}, routing::get, Router};
 use serde::Deserialize;
 use tokio::net::TcpListener;
 
 #[tokio::main]
 async fn main() {
+    
+    let port = env::var("PORT").expect("Missing port number");
+    let port = port.parse::<u16>().expect("Invalid port given");
+
     let routes_hello = Router::new()
         .route("/", get(handler_root))
         .route("/hello", get(handler_hello))
         .route("/hello2/:name", get(handler_hello2));
 
-    let listener = TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = TcpListener::bind(format!("0.0.0.0:{port}")).await.unwrap();
     println!("->> LISTENING on {:?}\n", listener.local_addr());
     axum::serve(listener, routes_hello.into_make_service()).await.unwrap();
 }
