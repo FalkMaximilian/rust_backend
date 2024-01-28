@@ -1,14 +1,12 @@
-use crate::model::ModelController;
-
-pub use self::error::{Error, Result};
-
 use std::env;
-
 use axum::{extract::{Path, Query}, middleware, response::{Html, IntoResponse, Response}, routing::{get, get_service}, Router};
 use serde::Deserialize;
 use tokio::net::TcpListener;
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
+
+use crate::model::ModelController;
+pub use self::error::{Error, Result};
 
 mod error;
 mod model;
