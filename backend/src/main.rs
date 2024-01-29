@@ -14,6 +14,7 @@ use tower_http::services::ServeDir;
 pub use self::error::{Error, Result};
 use crate::model::ModelController;
 
+mod ctx;
 mod error;
 mod model;
 mod web;

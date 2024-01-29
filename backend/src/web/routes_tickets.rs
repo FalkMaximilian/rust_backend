@@ -12,7 +12,10 @@ pub fn router(mc: ModelController) -> Router {
         .with_state(mc)
 }
 
-async fn create_ticket(State(mc): State<ModelController>, Json(ticket_fc): Json<TicketForCreate>) -> Result<Json<Ticket>> {
+async fn create_ticket(
+    State(mc): State<ModelController>,
+    Json(ticket_fc): Json<TicketForCreate>,
+) -> Result<Json<Ticket>> {
     println!("->> {:<12} - create_ticket", "HANDLER");
 
     let ticket = mc.create_ticket(ticket_fc).await?;
@@ -28,7 +31,10 @@ async fn list_tickets(State(mc): State<ModelController>) -> Result<Json<Vec<Tick
     Ok(Json(tickets))
 }
 
-async fn delete_ticket(State(mc): State<ModelController>, Path(id): Path<u64>) -> Result<Json<Ticket>> {
+async fn delete_ticket(
+    State(mc): State<ModelController>,
+    Path(id): Path<u64>,
+) -> Result<Json<Ticket>> {
     println!("->> {:<12} - delete_ticket", "HANDLER");
 
     let ticket = mc.delete_ticket(id).await?;

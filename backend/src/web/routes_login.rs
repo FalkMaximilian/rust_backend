@@ -1,4 +1,4 @@
-use axum::{routing::{post}, Json, Router};
+use axum::{routing::post, Json, Router};
 use serde::Deserialize;
 use serde_json::{json, Value};
 use tower_cookies::{Cookie, Cookies};
@@ -6,8 +6,7 @@ use tower_cookies::{Cookie, Cookies};
 use crate::{web::AUTH_TOKEN, Error, Result};
 
 pub fn routes() -> Router {
-    Router::new()
-        .route("/api/login", post(api_login))
+    Router::new().route("/api/login", post(api_login))
 }
 
 async fn api_login(cookies: Cookies, payload: Json<LoginPayload>) -> Result<Json<Value>> {
@@ -29,7 +28,6 @@ async fn api_login(cookies: Cookies, payload: Json<LoginPayload>) -> Result<Json
     }));
 
     Ok(body)
-
 }
 
 #[derive(Debug, Deserialize)]
