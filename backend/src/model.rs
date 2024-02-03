@@ -22,7 +22,7 @@ pub struct ModelController {
 impl ModelController {
     pub async fn new() -> Result<Self> {
         Ok(Self {
-            tickets_store: Arc::default()
+            tickets_store: Arc::default(),
         })
     }
 }

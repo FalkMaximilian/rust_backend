@@ -11,7 +11,7 @@ pub enum Error {
     AuthFailTokenWrongFormat,
 
     // -- Model errors
-    TicketDeleteFailIdNotFound {id: u64},
+    TicketDeleteFailIdNotFound { id: u64 },
 }
 
 impl IntoResponse for Error {
